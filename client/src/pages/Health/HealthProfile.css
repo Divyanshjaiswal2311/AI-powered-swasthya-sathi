@@ -1,0 +1,74 @@
+/* Health Profile Styles */
+
+.health-profile-container {
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.health-profile-container .header-section {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 30px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+}
+
+.health-profile-container .header-section h1 {
+  margin-bottom: 0;
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+.health-profile-container .nav-tabs {
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.health-profile-container .nav-tabs .nav-link {
+  color: #666;
+  border: none;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.health-profile-container .nav-tabs .nav-link:hover {
+  color: #667eea;
+  border-bottom-color: #667eea;
+}
+
+.health-profile-container .nav-tabs .nav-link.active {
+  color: #667eea;
+  border-bottom-color: #667eea;
+  background-color: transparent;
+  font-weight: 600;
+}
+
+.health-profile-container .card {
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.health-profile-container .card-title {
+  color: #333;
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+
+.health-profile-container .alert {
+  border: none;
+  border-left: 4px solid;
+  border-radius: 4px;
+}
+
+.health-profile-container .alert h6 {
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.health-profile-container .badge {
+  padding: 5px 10px;
+  font-size: 0.85rem;
+}
+
