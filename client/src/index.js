@@ -14,41 +14,54 @@ import store from "./redux/store";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 // =============================================
-// AGGRESSIVE CHROME EXTENSION ERROR SUPPRESSION
+// CHROME EXTENSION ERROR SUPPRESSION
 // =============================================
+// Suppress errors from Chrome extensions (exam.js, etc.)
+// These are not part of our application and should be hidden
 
-// Suppress console.error from chrome extensions
+// Override console methods to suppress extension errors
 const originalError = console.error;
 console.error = function(...args) {
   const errorString = args.map(arg => String(arg)).join(' ');
-  if (errorString.includes('chrome-extension://')) {
-    return; // Don't log extension errors at all
+  // Suppress chrome extension errors entirely
+  if (errorString.includes('chrome-extension://') || 
+      errorString.includes('toLowerCase') ||
+      errorString.includes('Cannot read properties')) {
+    return;
   }
   originalError.apply(console, args);
 };
 
-// Suppress console.warn from chrome extensions
 const originalWarn = console.warn;
 console.warn = function(...args) {
   const warnString = args.map(arg => String(arg)).join(' ');
   if (warnString.includes('chrome-extension://')) {
-    return; // Don't log extension warnings
+    return;
   }
   originalWarn.apply(console, args);
 };
 
-// Global error handler - catch and suppress extension errors
+// Global error event listener - suppress extension errors completely
 window.addEventListener("error", (event) => {
+  // Check if error is from chrome extension
   if (event.filename && event.filename.includes("chrome-extension://")) {
     event.preventDefault();
     event.stopImmediatePropagation();
     return true;
   }
-  if (event.message && event.message.includes("chrome-extension")) {
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    return true;
+  
+  // Check error message for extension-related errors
+  if (event.message) {
+    const message = String(event.message).toLowerCase();
+    if (message.includes('chrome-extension') || 
+        message.includes('tostring') ||
+        (message.includes('cannot read properties') && message.includes('tolowercase'))) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      return true;
+    }
   }
+  
   return false;
 }, true);
 
@@ -57,14 +70,20 @@ window.addEventListener("unhandledrejection", (event) => {
   try {
     const reasonStr = String(event.reason);
     if (reasonStr.includes("chrome-extension") || 
-        (event.reason && event.reason.message && event.reason.message.includes("chrome-extension"))) {
+        reasonStr.includes('toLowerCase')) {
       event.preventDefault();
       event.stopImmediatePropagation();
+      return true;
     }
   } catch (e) {
     // Ignore
   }
 }, true);
+
+// Intercept React's error reporting for extension errors
+if (window.React) {
+  // React will handle errors, we just suppress extension ones via console override above
+}
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

@@ -9,25 +9,14 @@
  * - Full-page coverage
  */
 
-import React, { useEffect } from "react";
+import React from "react";
 import Form from "../../components/shared/Form/Form";
 import { useSelector } from "react-redux";
 import Spinner from "../../components/shared/Spinner";
-import { toast } from "react-toastify";
 import "./Auth.css";
 
 const Register = () => {
-  const { loading, error } = useSelector((state) => state.auth);
-
-  // Show error only if there's a real error (not undefined, null, or empty string)
-  useEffect(() => {
-    if (error && error.trim() !== "") {
-      toast.error(error, {
-        position: "top-right",
-        autoClose: 3000,
-      });
-    }
-  }, [error]);
+  const { loading } = useSelector((state) => state.auth);
 
   return (
     <>

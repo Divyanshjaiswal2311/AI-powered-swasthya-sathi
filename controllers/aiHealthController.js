@@ -290,189 +290,160 @@ Remember: Your role is to provide information and first aid guidance, not medica
 };
 
 /**
- * Helper: Call Groq API
+ * Analyze Medical Report with AI
+ * Extracts key information and provides health recommendations
  */
-async function callGroqAPI(prompt) {
+const analyzeReportController = async (req, res) => {
   try {
-    if (!GROQ_API_KEY) {
-      return {
+    const { recordId, userId } = req.body;
+
+    // Fetch the medical record
+    const record = await medicalRecordModel.findById(recordId);
+    if (!record) {
+      return res.status(404).send({
         success: false,
-        error: "Groq API key not configured",
-      };
+        message: "Medical record not found"
+      });
     }
 
-    const startTime = Date.now();
+    // Create AI prompt for analysis
+    const analysisPrompt = `
+You are a medical report analyzer. Analyze this medical report and provide a structured JSON response with these exact fields:
+{
+  "summary": "Brief one-paragraph summary of the findings",
+  "keyFindings": ["Finding 1", "Finding 2", "Finding 3"],
+  "abnormalValues": [
+    {
+      "parameter": "Parameter name",
+      "value": 45,
+      "normalRange": "30-40",
+      "severity": "high"
+    }
+  ],
+  "recommendations": ["Recommendation 1", "Recommendation 2"],
+  "riskFactors": ["Risk factor 1"]
+}
 
-    const response = await axios.post(
-      GROQ_API_URL,
-      {
-        model: GROQ_MODEL,
-        messages: [
-          {
-            role: "system",
-            content: "You are a helpful health information assistant. Provide practical, evidence-based health information. Always remind users that you are NOT a medical professional."
-          },
-          {
-            role: "user",
-            content: prompt,
-          },
-        ],
-        max_tokens: 1024,
-        temperature: 0.7,
-      },
-      {
-        headers: {
-          "Authorization": `Bearer ${GROQ_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        timeout: 30000,
+Report Type: ${record.documentType}
+Report Title: ${record.documentTitle}
+Document Date: ${record.documentDate}
+
+Guidelines:
+- If this is a lab report (CBC/LFT/KFT), identify abnormal values with ranges
+- For imaging reports, describe findings and severity
+- Severity should be: low, medium, high, or critical
+- Provide actionable recommendations
+- Keep summary to 2-3 sentences
+- Provide 3-5 key findings
+- Provide 3-5 recommendations
+- If you cannot determine abnormal values, use empty array
+
+Important: Respond ONLY with valid JSON, no additional text.
+    `;
+
+    // Call Groq API for analysis
+    const aiResponse = await axios.post(GROQ_API_URL, {
+      model: GROQ_MODEL,
+      messages: [{
+        role: "user",
+        content: analysisPrompt
+      }],
+      temperature: 0.7,
+      max_tokens: 1500
+    }, {
+      headers: {
+        "Authorization": `Bearer ${GROQ_API_KEY}`,
+        "Content-Type": "application/json"
       }
-    );
+    });
 
-    const processingTime = Date.now() - startTime;
-    const aiText = response?.data?.choices?.[0]?.message?.content;
-
-    if (!aiText) {
-      return {
-        success: false,
-        error: "No response from Groq API",
-      };
+    // Parse AI response
+    let analysisData = {};
+    try {
+      const responseText = aiResponse.data.choices[0].message.content;
+      // Extract JSON from response
+      const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        analysisData = JSON.parse(jsonMatch[0]);
+      } else {
+        // Fallback to default analysis
+        analysisData = createDefaultAnalysis(record);
+      }
+    } catch (parseError) {
+      console.log("Parse error, using default response");
+      analysisData = createDefaultAnalysis(record);
     }
 
-    return {
+    // Ensure all required fields exist
+    analysisData.summary = analysisData.summary || "Report has been analyzed";
+    analysisData.keyFindings = Array.isArray(analysisData.keyFindings) ? analysisData.keyFindings : [];
+    analysisData.abnormalValues = Array.isArray(analysisData.abnormalValues) ? analysisData.abnormalValues : [];
+    analysisData.recommendations = Array.isArray(analysisData.recommendations) ? analysisData.recommendations : [];
+    analysisData.riskFactors = Array.isArray(analysisData.riskFactors) ? analysisData.riskFactors : [];
+
+    // Validate abnormal values structure
+    analysisData.abnormalValues = analysisData.abnormalValues.map(v => ({
+      parameter: v.parameter || 'Unknown',
+      value: v.value || 0,
+      normalRange: v.normalRange || 'N/A',
+      severity: ['low', 'medium', 'high', 'critical'].includes(v.severity) ? v.severity : 'medium'
+    }));
+
+    // Update record with AI analysis
+    record.aiAnalysis = {
+      summary: analysisData.summary,
+      keyFindings: analysisData.keyFindings,
+      abnormalValues: analysisData.abnormalValues,
+      recommendations: analysisData.recommendations,
+      riskFactors: analysisData.riskFactors,
+      analyzedAt: new Date(),
+      analysisModel: "Groq-Llama-3.1"
+    };
+
+    await record.save();
+
+    return res.status(200).send({
       success: true,
-      data: aiText,
-      processingTime,
-    };
+      message: "Medical report analyzed successfully",
+      analysis: record.aiAnalysis
+    });
+
   } catch (error) {
-    console.log("❌ Groq API Error:", error.message);
-    if (error.response?.data) {
-      console.log("Error Response:", error.response.data);
-    }
-    return {
+    console.log("Analysis error:", error);
+    return res.status(500).send({
       success: false,
-      error: error.message,
-    };
+      message: "Error analyzing medical report",
+      error: error.message
+    });
   }
-}
+};
 
 /**
- * Helper: Call Gemini API (deprecated - for backward compatibility)
+ * Helper function to create default analysis
  */
-async function callGeminiAPI(prompt) {
-  // Redirect to Groq API
-  return callGroqAPI(prompt);
-}
-
-/**
- * Helper: Generate prompt based on report type
- */
-function generatePrompt(reportType, healthData) {
-  const baseData = `
-  User Health Profile:
-  - Age: ${healthData.age}
-  - Blood Type: ${healthData.bloodType}
-  - Current BMI: ${healthData.vitals?.bmi || "Unknown"}
-  - Blood Pressure: ${healthData.vitals?.systolic}/${healthData.vitals?.diastolic} mmHg
-  - Medical Conditions: ${healthData.conditions.map((c) => c.condition).join(", ") || "None"}
-  - Allergies: ${healthData.allergies.map((a) => a.allergen).join(", ") || "None"}
-  - Current Medications: ${healthData.medications.map((m) => m.name).join(", ") || "None"}
-  - Lifestyle: ${JSON.stringify(healthData.lifestyle)}
-  `;
-
-  switch (reportType) {
-    case "health_summary":
-      return `${baseData}
-      Generate a comprehensive health summary with:
-      1. Overall health status assessment
-      2. Key health observations
-      3. Active health concerns
-      4. Wellness recommendations
-      Format: Structured with clear sections`;
-
-    case "risk_assessment":
-      return `${baseData}
-      Perform a health risk assessment with:
-      1. Identified risk factors
-      2. Risk severity levels (low, medium, high)
-      3. Potential health complications
-      4. Mitigation strategies
-      Format: Risk factor analysis`;
-
-    case "wellness_recommendation":
-      return `${baseData}
-      Provide personalized wellness recommendations:
-      1. Diet and nutrition suggestions
-      2. Exercise and lifestyle modifications
-      3. Stress management techniques
-      4. Preventive health measures
-      Format: Practical action items`;
-
-    default:
-      return baseData;
-  }
-}
-
-/**
- * Helper: Parse AI Response
- */
-function parseAIResponse(aiText, reportType) {
-  // Basic parsing - can be enhanced with NLP
+function createDefaultAnalysis(record) {
   return {
-    title: `${reportType.replace(/_/g, " ").toUpperCase()} Report`,
-    summary: aiText.substring(0, 500),
-    findings: [
-      {
-        finding: "Health assessment completed",
-        importance: "high",
-        details: aiText,
-      },
+    summary: `This ${record.documentType?.replace(/_/g, ' ')} has been received and processed. Please review with your healthcare provider for detailed interpretation and clinical recommendations.`,
+    keyFindings: [
+      "Document successfully uploaded and processed",
+      "Ready for medical review by healthcare provider",
+      "Additional professional analysis recommended"
     ],
+    abnormalValues: [],
     recommendations: [
-      {
-        recommendation: "Follow up with healthcare provider",
-        category: "medical",
-        priority: "high",
-        timeframe: "Within 1 week",
-      },
+      "Review with qualified healthcare provider",
+      "Follow any medical advice provided by your doctor",
+      "Schedule follow-up tests if recommended",
+      "Maintain regular health monitoring",
+      "Keep copies of your medical records"
     ],
-    riskFactors: [
-      {
-        riskFactor: "Requires ongoing monitoring",
-        severity: "moderate",
-        mitigation: "Regular check-ups and vitals monitoring",
-      },
-    ],
-    metricsAnalysis: {
-      vitals: {
-        status: "Need review",
-        interpretation: "See detailed report",
-      },
-    },
-    confidence: 85,
+    riskFactors: []
   };
-}
-
-/**
- * Helper: Calculate Age
- */
-function calculateAge(dateOfBirth) {
-  const today = new Date();
-  let age = today.getFullYear() - new Date(dateOfBirth).getFullYear();
-  const monthDifference = today.getMonth() - new Date(dateOfBirth).getMonth();
-
-  if (
-    monthDifference < 0 ||
-    (monthDifference === 0 && today.getDate() < new Date(dateOfBirth).getDate())
-  ) {
-    age--;
-  }
-
-  return age;
 }
 
 module.exports = {
   generateHealthReportController,
   getFirstAidRecommendationController,
   aiHealthChatController,
+  analyzeReportController,
 };

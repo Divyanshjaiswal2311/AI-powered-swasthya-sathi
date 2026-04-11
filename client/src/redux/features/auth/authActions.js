@@ -1,6 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import API from "../../../services/API";
-import { toast } from "react-toastify";
 import { checkServerConnection, getNetworkErrorMessage } from "../../../utils/serverCheck";
 
 export const userLogin = createAsyncThunk(
@@ -31,7 +30,7 @@ export const userLogin = createAsyncThunk(
       console.log('Login response:', data);
       
       if (data.success) {
-        toast.success(data.message);
+        // ✅ Don't show toast here - let Form.js handle it
         localStorage.setItem("token", data.token);
         window.location.replace("/dashboard");
       } else {
@@ -114,7 +113,7 @@ export const userRegister = createAsyncThunk(
       console.log('Registration response:', data);
 
       if (data?.success) {
-        toast.success("User Registered Successfully");
+        // ✅ Don't show toast here - let Form.js handle it
         window.location.replace("/login");
       } else {
         return rejectWithValue(data?.message || "Registration failed");

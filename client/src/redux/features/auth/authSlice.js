@@ -37,7 +37,20 @@ const initialState = {
 const authSlice = createSlice({
   name: "auth",
   initialState: initialState,
-  reducers: {},  // No standard reducers, using extraReducers for async actions
+  reducers: {
+    /**
+     * Logout reducer - Clears all authentication data
+     * This should be dispatched when user logs out
+     */
+    logoutUser: (state) => {
+      state.loading = false;
+      state.user = null;
+      state.token = null;
+      state.error = null;
+      // Clear localStorage
+      localStorage.removeItem("token");
+    }
+  },
   extraReducers: (builder) => {
     // Login action handlers
     builder.addCase(userLogin.pending, (state) => {
@@ -84,4 +97,5 @@ const authSlice = createSlice({
   },
 });
 
+export const { logoutUser } = authSlice.actions;
 export default authSlice;

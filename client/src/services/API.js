@@ -68,6 +68,7 @@ API.interceptors.request.use(
  * 
  * Intercepts incoming responses to handle errors consistently.
  * Logs error details for debugging purposes.
+ * NOTE: Auth endpoints (login, register) handle their own notifications via Form.js
  */
 API.interceptors.response.use(
   function (response) {
@@ -81,6 +82,13 @@ API.interceptors.response.use(
     // Don't show toast for 401 errors (authentication failures) as they're handled by components
     if (error.response?.status === 401) {
       console.log('Authentication error - handled by component');
+      return Promise.reject(error);
+    }
+    
+    // Don't show toast for auth endpoints (login, register) - Form.js handles all notifications
+    const requestPath = error.config?.url || '';
+    if (requestPath.includes('/auth/login') || requestPath.includes('/auth/register')) {
+      console.log('Auth endpoint error - handled by Form.js component');
       return Promise.reject(error);
     }
     

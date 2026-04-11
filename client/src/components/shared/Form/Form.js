@@ -109,8 +109,12 @@ const Form = ({ formType, formTitle, submitBtn }) => {
       if (formType === "login") {
         const response = await handleLogin({ email, password, role }, dispatch);
         if (response && response.success) {
-          toast.success(response.message);
+          // ✅ Success - show success toast and navigate
+          toast.success("Login successful!");
           navigate("/");
+        } else if (response && !response.success) {
+          // ❌ Error - show error toast only
+          toast.error(response.message || "Login failed");
         }
       }
       // Handle register
@@ -130,13 +134,17 @@ const Form = ({ formType, formTitle, submitBtn }) => {
           phone: phone || '',
         });
         if (response && response.success) {
-          toast.success(response.message);
+          // ✅ Success - show success toast and navigate
+          toast.success("Registration successful!");
           navigate("/login");
+        } else if (response && !response.success) {
+          // ❌ Error - show error toast only
+          toast.error(response.message || "Registration failed");
         }
       }
     } catch (error) {
       console.log(error);
-      // Error handling is now in the API interceptor
+      toast.error("An unexpected error occurred");
     } finally {
       setLoading(false);
     }

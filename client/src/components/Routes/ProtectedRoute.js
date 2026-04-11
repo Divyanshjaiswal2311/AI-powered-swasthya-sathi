@@ -10,6 +10,7 @@ import React, { useEffect, useCallback, useState } from "react";
 import { useDispatch } from "react-redux";          // For dispatching Redux actions
 import API from "../../services/API";               // API service for backend calls
 import { getCurrentUser } from "../../redux/features/auth/authActions";  // Auth action
+import { logoutUser } from "../../redux/features/auth/authSlice";  // Logout action
 import { Navigate } from "react-router-dom";        // For redirection
 import { toast } from "react-toastify";             // For error notifications
 import Spinner from "../shared/Spinner";            // Loading spinner
@@ -46,12 +47,16 @@ const ProtectedRoute = ({ children }) => {
       }
     } catch (error) {
       // Clear authentication data on failure
-      localStorage.clear();
+      dispatch(logoutUser());  // Clear Redux state
+      localStorage.removeItem("token");
       setHasToken(false);
       setIsLoading(false);
       // Only show error if it's not a network error (which is expected on first load)
       if (error.code !== "ERR_NETWORK" && error.response?.status !== 401) {
-        toast.error(error.message || "Authentication failed");
+        // Silently clear auth on 401, don't show error
+        if (error.response?.status !== 401) {
+          console.log("Auth validation failed, redirecting to login");
+        }
       }
     }
   }, [dispatch]);
@@ -65,10 +70,11 @@ const ProtectedRoute = ({ children }) => {
       // Only try to fetch user data if we have a token
       getUser();
     } else {
-      // No token, no need to fetch user data
+      // No token, clear Redux state and redirect
+      dispatch(logoutUser());
       setIsLoading(false);
     }
-  }, [getUser]);
+  }, [getUser, dispatch]);
 
   // Show loading spinner while checking authentication
   if (isLoading) {

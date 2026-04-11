@@ -1,19 +1,11 @@
-/**
- * Blood Bank Management System - Server Entry Point
- * 
- * This file sets up the Express server, connects to MongoDB,
- * configures middleware, and defines API routes for the application.
- * 
- * The server handles authentication, inventory management, analytics,
- * and administrative operations for the blood bank system.
- */
-
 // Import external dependencies
 const express = require("express");  // Web framework
 const dotenv = require("dotenv");    // Environment variable management
 const colors = require("colors");    // Console text styling
 const morgan = require("morgan");    // HTTP request logger
 const cors = require("cors");        // Cross-Origin Resource Sharing
+const multer = require("multer");    // File upload handling
+const path = require("path");        // Path handling
 
 // Import local modules
 const connectDB = require("./config/db");  // Database connection function
@@ -46,8 +38,38 @@ connectDB();
 // Create Express application instance
 const app = express();
 
+// Configure file upload storage
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/medical-records/');
+  },
+  filename: (req, file, cb) => {
+    const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1E9) + path.extname(file.originalname);
+    cb(null, uniqueName);
+  }
+});
+
+// File upload filter
+const fileFilter = (req, file, cb) => {
+  const allowedMimes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
+  if (allowedMimes.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(new Error('Invalid file type. Only PDF and images are allowed.'), false);
+  }
+};
+
+// Configure multer
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+  fileFilter: fileFilter
+});
+
 // Configure middleware
 app.use(express.json());             // Parse JSON request bodies
+app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
+app.use('/uploads', express.static('uploads'));  // Serve uploaded files
 app.use(morgan("dev"));             // Log HTTP requests in development mode
 
 // Configure CORS based on environment

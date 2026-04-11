@@ -1,18 +1,22 @@
 import React from "react";
 import { BiDonateBlood, BiUserCircle, BiMenu, BiHomeAlt, BiLineChart } from "react-icons/bi";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
+import { logoutUser } from "../../../redux/features/auth/authSlice";
 
 const Header = ({ toggleSidebar }) => {
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
   
   // logout handler
   const handleLogout = () => {
-    localStorage.clear();
+    // Dispatch Redux logout action to clear state
+    dispatch(logoutUser());
     toast.success("Logout Successful");
+    // Navigate to login page
     navigate("/login");
   };
 
@@ -28,7 +32,7 @@ const Header = ({ toggleSidebar }) => {
         
         <Link to="/" className="navbar-brand">
           <BiDonateBlood size={28} className="me-2 text-light" /> 
-          <span>Blood Bank</span>
+          <span>Swasth Sathi</span>
         </Link>
         
         <button
