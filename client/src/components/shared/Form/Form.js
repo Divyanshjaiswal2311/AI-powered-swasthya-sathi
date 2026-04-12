@@ -72,7 +72,7 @@ const Form = ({ formType, formTitle, submitBtn }) => {
       
       // Check role-specific required fields
       if (normalizedRole === "donar" && !name) {
-        toast.error("Name is required for donors");
+        toast.error("Name is required for users");
         return;
       }
       
@@ -192,7 +192,7 @@ const Form = ({ formType, formTitle, submitBtn }) => {
                 checked={role === "donar"}
               />
               <label htmlFor="donarRadio" className="form-check-label">
-                Donor
+                User
               </label>
             </div>
             <div className="form-check">
