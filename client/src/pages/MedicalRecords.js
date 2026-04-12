@@ -6,7 +6,7 @@ import "./MedicalRecords.css";
 import { 
   FaFileUpload, FaFilePdf, FaFileImage, FaTrash, FaDownload, 
   FaSpinner, FaCheckCircle, FaExclamationTriangle, FaHeartbeat,
-  FaAmbulance, FaUserMd, FaTimes, FaBrain
+  FaAmbulance, FaUserMd, FaTimes, FaBrain, FaMoon, FaSun
 } from "react-icons/fa";
 import { toast } from "react-toastify";
 
@@ -22,11 +22,24 @@ const MedicalRecords = () => {
   const [analysisResult, setAnalysisResult] = useState(null);
   const [showAnalysisModal, setShowAnalysisModal] = useState(false);
   const [loadingRecords, setLoadingRecords] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const saved = localStorage.getItem('medicalRecordsDarkMode');
+    return saved !== null ? JSON.parse(saved) : false;
+  });
 
   // Fetch medical records on component mount
   React.useEffect(() => {
     fetchMedicalRecords();
   }, [user]);
+
+  // Save theme preference to localStorage
+  React.useEffect(() => {
+    localStorage.setItem('medicalRecordsDarkMode', JSON.stringify(isDarkMode));
+  }, [isDarkMode]);
+
+  const toggleTheme = () => {
+    setIsDarkMode(!isDarkMode);
+  };
 
   const fetchMedicalRecords = async () => {
     try {
@@ -144,8 +157,8 @@ const MedicalRecords = () => {
     if (!window.confirm("Are you sure you want to delete this record?")) return;
 
     try {
-      const { data } = await API.delete(`/api/v1/medical-records/delete/${recordId}`);
-      
+      const { data } = await API.delete(`/medical-records/delete/${recordId}`);
+
       if (data?.success) {
         setRecords(records.filter(r => r._id !== recordId));
         toast.success("Record deleted successfully");
@@ -169,12 +182,19 @@ const MedicalRecords = () => {
 
   return (
     <Layout>
-      <div className="medical-records">
+      <div className={`medical-records ${isDarkMode ? 'dark' : 'light'}`}>
         {/* Header */}
         <div className="records-header">
           <div>
             <h1>📋 Medical Records Management</h1>
             <p>Upload, analyze, and manage your health test reports with AI-powered insights</p>
+          </div>
+          <div className="theme-toggle" onClick={toggleTheme}>
+            {isDarkMode ? (
+              <FaSun className="toggle-icon" />
+            ) : (
+              <FaMoon className="toggle-icon" />
+            )}
           </div>
         </div>
 

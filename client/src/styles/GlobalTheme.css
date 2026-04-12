@@ -1,0 +1,250 @@
+/* ==========================================
+   GLOBAL THEME SYSTEM - LIGHT & DARK MODE
+   ========================================== */
+
+:root {
+  /* ========== LIGHT MODE COLORS ========== */
+  --light-bg-main: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  --light-bg-card: #ffffff;
+  --light-bg-secondary: #f8f9fa;
+  --light-text-primary: #2c3e50;
+  --light-text-secondary: #7f8c8d;
+  --light-text-tertiary: #95a5a6;
+  --light-border: #ecf0f1;
+  --light-shadow: rgba(0, 0, 0, 0.08);
+  --light-shadow-hover: rgba(0, 0, 0, 0.12);
+  --light-accent: #3498db;
+  --light-accent-dark: #2980b9;
+
+  /* ========== DARK MODE COLORS ========== */
+  --dark-bg-main: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  --dark-bg-card: #2d3561;
+  --dark-bg-secondary: #3d4575;
+  --dark-text-primary: #ffffff;
+  --dark-text-secondary: #d0d0e0;
+  --dark-text-tertiary: #b0b0c0;
+  --dark-border: #3d4563;
+  --dark-shadow: rgba(0, 0, 0, 0.3);
+  --dark-shadow-hover: rgba(124, 58, 237, 0.3);
+  --dark-accent: #7c3aed;
+  --dark-accent-dark: #6d28d9;
+}
+
+/* ========== LIGHT MODE (Default) ========== */
+:root.light-mode {
+  --bg-main: var(--light-bg-main);
+  --bg-card: var(--light-bg-card);
+  --bg-secondary: var(--light-bg-secondary);
+  --text-primary: var(--light-text-primary);
+  --text-secondary: var(--light-text-secondary);
+  --text-tertiary: var(--light-text-tertiary);
+  --border-color: var(--light-border);
+  --shadow: var(--light-shadow);
+  --shadow-hover: var(--light-shadow-hover);
+  --accent-color: var(--light-accent);
+  --accent-dark: var(--light-accent-dark);
+}
+
+/* ========== DARK MODE ========== */
+:root.dark-mode {
+  --bg-main: var(--dark-bg-main);
+  --bg-card: var(--dark-bg-card);
+  --bg-secondary: var(--dark-bg-secondary);
+  --text-primary: var(--dark-text-primary);
+  --text-secondary: var(--dark-text-secondary);
+  --text-tertiary: var(--dark-text-tertiary);
+  --border-color: var(--dark-border);
+  --shadow: var(--dark-shadow);
+  --shadow-hover: var(--dark-shadow-hover);
+  --accent-color: var(--dark-accent);
+  --accent-dark: var(--dark-accent-dark);
+}
+
+/* ========== GLOBAL BODY STYLES ========== */
+body {
+  background: var(--bg-main);
+  color: var(--text-primary);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* ========== GLOBAL TEXT STYLES ========== */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary);
+  transition: color 0.3s ease;
+}
+
+p {
+  color: var(--text-secondary);
+  transition: color 0.3s ease;
+}
+
+a {
+  color: var(--accent-color);
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: var(--accent-dark);
+}
+
+/* ========== GLOBAL CARD STYLES ========== */
+.card,
+[class*='card'],
+[class*='Card'] {
+  background: var(--bg-card);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+  box-shadow: 0 2px 8px var(--shadow);
+  transition: all 0.3s ease;
+}
+
+/* ========== GLOBAL BUTTON STYLES ========== */
+button {
+  transition: all 0.3s ease;
+}
+
+.btn,
+[class*='btn'],
+[class*='button'] {
+  background: var(--accent-color);
+  color: white;
+  border-color: var(--accent-color);
+  transition: all 0.3s ease;
+}
+
+.btn:hover:not(:disabled),
+[class*='btn']:hover:not(:disabled),
+[class*='button']:hover:not(:disabled) {
+  background: var(--accent-dark);
+  border-color: var(--accent-dark);
+  box-shadow: 0 4px 12px var(--shadow-hover);
+}
+
+/* ========== GLOBAL INPUT STYLES ========== */
+input,
+textarea,
+select {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+  transition: all 0.3s ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+:root.dark-mode input:focus,
+:root.dark-mode textarea:focus,
+:root.dark-mode select:focus {
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+}
+
+/* ========== GLOBAL MODAL STYLES ========== */
+[class*='modal'],
+[class*='Modal'],
+.modal {
+  background: var(--bg-card);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+}
+
+.modal-overlay,
+[class*='overlay'] {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+/* ========== ANIMATIONS ========== */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* ========== UTILITY CLASSES ========== */
+.text-primary {
+  color: var(--text-primary) !important;
+}
+
+.text-secondary {
+  color: var(--text-secondary) !important;
+}
+
+.text-tertiary {
+  color: var(--text-tertiary) !important;
+}
+
+.bg-card {
+  background: var(--bg-card) !important;
+}
+
+.bg-secondary {
+  background: var(--bg-secondary) !important;
+}
+
+.border {
+  border-color: var(--border-color) !important;
+}
+
+.shadow {
+  box-shadow: 0 2px 8px var(--shadow) !important;
+}
+
+.shadow-hover {
+  box-shadow: 0 8px 24px var(--shadow-hover) !important;
+}
+
+/* ========== SCROLLBAR STYLING ========== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent-color);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-dark);
+}
+

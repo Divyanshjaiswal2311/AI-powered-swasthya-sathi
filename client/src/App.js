@@ -15,9 +15,11 @@ import { ToastContainer } from "react-toastify";   // Notification component
 import "react-toastify/dist/ReactToastify.css";    // Notification styles
 import "./styles/Animations.css";                  // Modern animations and effects
 import "./styles/Responsive.css";                  // Responsive utilities and grid system
+import "./styles/GlobalTheme.css";                 // Global light/dark theme system
 import ProtectedRoute from "./components/Routes/ProtectedRoute";  // Auth guard for private routes
 import PublicRoute from "./components/Routes/PublicRoute";        // Auth guard for public routes
 import ErrorBoundary from "./components/ErrorBoundary";           // Error boundary for catching React errors
+import { ThemeProvider } from "./contexts/ThemeContext";          // Global theme provider
 
 // Dashboard components for different user roles
 import Donar from "./pages/Dashboard/Donar";                // Donor management page

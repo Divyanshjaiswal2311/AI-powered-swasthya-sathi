@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import ThemeToggle from "../components/shared/ThemeToggle";
+import { useTheme } from "../contexts/ThemeContext";
 import "./LandingPage.css";
 import { FaHeartbeat, FaHospital, FaUsers, FaShieldAlt, FaBrain, FaChartLine } from "react-icons/fa";
 
@@ -69,13 +71,16 @@ const LandingPage = () => {
             <FaHeartbeat className="logo-icon" />
             <span className="logo-text">Swasthya Sathi</span>
           </Link>
-          <div className="nav-links">
+          <div className="nav-center">
             <Link to="/login" className="nav-link">
               Login
             </Link>
             <Link to="/register" className="nav-link register-btn">
               Register
             </Link>
+          </div>
+          <div className="nav-theme-toggle">
+            <ThemeToggle />
           </div>
         </div>
       </nav>
@@ -259,4 +264,4 @@ const LandingPage = () => {
   );
 };
 
-export default LandingPage; 
+export default LandingPage;
