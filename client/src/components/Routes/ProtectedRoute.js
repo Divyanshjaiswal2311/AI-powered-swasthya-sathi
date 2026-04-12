@@ -12,7 +12,6 @@ import API from "../../services/API";               // API service for backend c
 import { getCurrentUser } from "../../redux/features/auth/authActions";  // Auth action
 import { logoutUser } from "../../redux/features/auth/authSlice";  // Logout action
 import { Navigate } from "react-router-dom";        // For redirection
-import { toast } from "react-toastify";             // For error notifications
 import Spinner from "../shared/Spinner";            // Loading spinner
 
 /**

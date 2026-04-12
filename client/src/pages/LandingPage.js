@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import ThemeToggle from "../components/shared/ThemeToggle";
-import { useTheme } from "../contexts/ThemeContext";
 import "./LandingPage.css";
 import { FaHeartbeat, FaHospital, FaUsers, FaShieldAlt, FaBrain, FaChartLine } from "react-icons/fa";
 

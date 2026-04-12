@@ -9,7 +9,6 @@
 import React from "react";
 import { Navigate } from "react-router-dom";  // For redirecting users
 import { useSelector } from "react-redux";    // For accessing Redux state
-import { toast } from "react-toastify";       // For notifications
 
 /**
  * PublicRoute Component

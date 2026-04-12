@@ -19,7 +19,6 @@ import "./styles/GlobalTheme.css";                 // Global light/dark theme sy
 import ProtectedRoute from "./components/Routes/ProtectedRoute";  // Auth guard for private routes
 import PublicRoute from "./components/Routes/PublicRoute";        // Auth guard for public routes
 import ErrorBoundary from "./components/ErrorBoundary";           // Error boundary for catching React errors
-import { ThemeProvider } from "./contexts/ThemeContext";          // Global theme provider
 
 // Dashboard components for different user roles
 import User from "./pages/Dashboard/User";                // User management page

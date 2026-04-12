@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useCallback, useState, useRef } from "react";
 import Layout from "../components/shared/Layout/Layout";
 import { useSelector } from "react-redux";
 import API from "../services/API";
@@ -27,21 +27,7 @@ const MedicalRecords = () => {
     return saved !== null ? JSON.parse(saved) : false;
   });
 
-  // Fetch medical records on component mount
-  React.useEffect(() => {
-    fetchMedicalRecords();
-  }, [user]);
-
-  // Save theme preference to localStorage
-  React.useEffect(() => {
-    localStorage.setItem('medicalRecordsDarkMode', JSON.stringify(isDarkMode));
-  }, [isDarkMode]);
-
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-  };
-
-  const fetchMedicalRecords = async () => {
+  const fetchMedicalRecords = useCallback(async () => {
     try {
       setLoadingRecords(true);
       const { data } = await API.post("/medical-records/get-records", {
@@ -56,6 +42,20 @@ const MedicalRecords = () => {
     } finally {
       setLoadingRecords(false);
     }
+  }, [user?._id]);
+
+  // Fetch medical records on component mount
+  React.useEffect(() => {
+    fetchMedicalRecords();
+  }, [fetchMedicalRecords]);
+
+  // Save theme preference to localStorage
+  React.useEffect(() => {
+    localStorage.setItem('medicalRecordsDarkMode', JSON.stringify(isDarkMode));
+  }, [isDarkMode]);
+
+  const toggleTheme = () => {
+    setIsDarkMode(!isDarkMode);
   };
 
   // Handle File Upload
@@ -490,4 +490,3 @@ const MedicalRecords = () => {
 };
 
 export default MedicalRecords;
-
