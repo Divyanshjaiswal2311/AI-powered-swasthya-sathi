@@ -233,28 +233,28 @@ const getRecentInventoryController = async (req, res) => {
  * @param {Object} res - Express response object
  * @returns {Object} - Response with donor records
  */
-const getDonarsController = async (req, res) => {
+const getUsersController = async (req, res) => {
   try {
     const organisation = req.body.userId;
     
-    // Find unique donor IDs from inventory records
-    const donorId = await inventoryModel.distinct("donar", {
+    // Find unique user IDs from inventory records
+    const userId = await inventoryModel.distinct("donar", {
       organisation,
     });
     
-    // Retrieve full donor details for the IDs
-    const donars = await userModel.find({ _id: { $in: donorId } });
+    // Retrieve full user details for the IDs
+    const users = await userModel.find({ _id: { $in: userId } });
 
     return res.status(200).send({
       success: true,
-      message: "Donor Records Fetched Successfully",
-      donars,
+      message: "User Records Fetched Successfully",
+      users,
     });
   } catch (error) {
     console.log(error);
     return res.status(500).send({
       success: false,
-      message: "Error in Donor records",
+      message: "Error in User records",
       error,
     });
   }
@@ -381,9 +381,9 @@ const getOrgnaisationForHospitalController = async (req, res) => {
 module.exports = {
   createInventoryController,        // Create new inventory record
   getInventoryController,           // Get all inventory for an organization
-  getDonarsController,              // Get all donors for an organization
+  getUsersController,               // Get all users for an organization
   getHospitalController,            // Get all hospitals for an organization
-  getOrgnaisationController,        // Get organizations for a donor
+  getOrgnaisationController,        // Get organizations for a user
   getOrgnaisationForHospitalController, // Get organizations for a hospital
   getInventoryHospitalController,   // Get inventory for a hospital
   getRecentInventoryController,     // Get recent inventory records

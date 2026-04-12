@@ -5,7 +5,7 @@ export const userMenu = [
     icon: "fa-solid fa-warehouse",
   },
   {
-    name: "Donar",
+    name: "User",
     path: "/donar",
     icon: "fa-solid fa-hand-holding-medical",
   },

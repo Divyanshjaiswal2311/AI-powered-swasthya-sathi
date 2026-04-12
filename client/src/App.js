@@ -22,7 +22,7 @@ import ErrorBoundary from "./components/ErrorBoundary";           // Error bound
 import { ThemeProvider } from "./contexts/ThemeContext";          // Global theme provider
 
 // Dashboard components for different user roles
-import Donar from "./pages/Dashboard/Donar";                // Donor management page
+import User from "./pages/Dashboard/User";                // User management page
 import Hospitals from "./pages/Dashboard/Hospitals";        // Hospital management page
 import OrganisationPage from "./pages/Dashboard/OrganisationPage";  // Organization management
 import Consumer from "./pages/Dashboard/Consumer";          // Blood consumer/usage tracking
@@ -147,7 +147,7 @@ function App() {
           path="/donar"
           element={
             <ProtectedRoute>
-              <Donar />
+              <User />
             </ProtectedRoute>
           }
         />
