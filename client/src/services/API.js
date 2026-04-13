@@ -8,9 +8,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 // ✅ FIX 1: Add /api/v1 in base URL
-const BASE_URL =
-  process.env.REACT_APP_API_URL ||
-  "https://ai-powered-swasthya-sathi.onrender.com/api/v1";
+const BASE_URL = "https://ai-powered-swasthya-sathi.onrender.com/api/v1";
 
 console.log("Using API Base URL:", BASE_URL);
 
