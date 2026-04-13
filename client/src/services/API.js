@@ -1,60 +1,42 @@
 /**
  * API Service Configuration
  * 
- * This file configures and exports an Axios instance for making HTTP requests
- * to the backend API. It includes interceptors for handling authentication
- * and error logging.
+ * Clean production-ready Axios setup
  */
 
-import axios from "axios";  // HTTP client library
+import axios from "axios";
 import { toast } from "react-toastify";
-import { checkServerConnection, getNetworkErrorMessage } from "../utils/serverCheck";
 
-// Debug the API URL being used
-const BASE_URL = process.env.REACT_APP_API_URL || "https://ai-powered-swasthya-sathi.onrender.com";
-console.log('Using API Base URL:', BASE_URL);
+// ✅ FIX 1: Add /api/v1 in base URL
+const BASE_URL =
+  process.env.REACT_APP_API_URL ||
+  "https://ai-powered-swasthya-sathi.onrender.com/api/v1";
 
-// Test connection before setting up API
-export const testConnection = async () => {
-  try {
-    const isConnected = await checkServerConnection();
-    console.log("Server connection test:", isConnected ? "Success" : "Failed");
-    return isConnected;
-  } catch (error) {
-    console.error("Error during connection test:", error);
-    return false;
-  }
-};
+console.log("Using API Base URL:", BASE_URL);
 
 /**
  * Axios Instance
- * 
- * Preconfigured Axios instance with base URL and default headers.
- * Used throughout the application for consistent API communication.
  */
-const API = axios.create({ 
-  baseURL: BASE_URL,  // Hardcoded base URL to avoid env issues
+const API = axios.create({
+  baseURL: BASE_URL,
   headers: {
-    'Content-Type': 'application/json'     // Default content type for requests
+    "Content-Type": "application/json",
   },
-  withCredentials: true,  // Disable credentials to avoid CORS issues
-  timeout: 10000  // Add a timeout to prevent hanging requests
+  withCredentials: true, // ✅ matches backend CORS
+  timeout: 10000, // ✅ prevents Render timeout issues
 });
 
 /**
  * Request Interceptor
- * 
- * Intercepts outgoing requests to add authentication token if available.
- * This ensures all authenticated requests include the JWT token.
  */
 API.interceptors.request.use(
   function (config) {
-    // Add auth token to header if available
     const token = localStorage.getItem("token");
+
     if (token) {
       config.headers["Authorization"] = `Bearer ${token}`;
     }
-    console.log('API Request:', config.method, config.url);
+
     return config;
   },
   function (error) {
@@ -65,46 +47,40 @@ API.interceptors.request.use(
 
 /**
  * Response Interceptor
- * 
- * Intercepts incoming responses to handle errors consistently.
- * Logs error details for debugging purposes.
- * NOTE: Auth endpoints (login, register) handle their own notifications via Form.js
  */
 API.interceptors.response.use(
   function (response) {
-    console.log('API Response:', response.status);
-    return response;  // Pass through successful responses
+    return response;
   },
   function (error) {
-    // Handle network errors
-    console.error("API Response Error:", error?.response?.data || error.message || error);
-    
-    // Don't show toast for 401 errors (authentication failures) as they're handled by components
+    console.error(
+      "API Response Error:",
+      error?.response?.data || error.message || error
+    );
+
+    // ✅ Ignore 401 (handled by UI)
     if (error.response?.status === 401) {
-      console.log('Authentication error - handled by component');
       return Promise.reject(error);
     }
-    
-    // Don't show toast for auth endpoints (login, register) - Form.js handles all notifications
-    const requestPath = error.config?.url || '';
-    if (requestPath.includes('/auth/login') || requestPath.includes('/auth/register')) {
-      console.log('Auth endpoint error - handled by Form.js component');
+
+    // ✅ Ignore auth endpoint errors (handled in form)
+    const requestPath = error.config?.url || "";
+    if (
+      requestPath.includes("/auth/login") ||
+      requestPath.includes("/auth/register")
+    ) {
       return Promise.reject(error);
     }
-    
-    // Don't show toast for network errors on initial page load
+
+    // ✅ Network error handling (Render cold start etc.)
     if (error.code === "ERR_NETWORK") {
-      // Only show network error toast if it's not the initial page load
-      const isInitialLoad = !localStorage.getItem("token");
-      if (!isInitialLoad) {
-        toast.error(getNetworkErrorMessage(error));
-      }
+      toast.error("Server is waking up... please try again in a few seconds.");
     } else if (error.response?.data?.message) {
       toast.error(error.response.data.message);
     } else if (error.message) {
       toast.error(error.message);
     }
-    
+
     return Promise.reject(error);
   }
 );
