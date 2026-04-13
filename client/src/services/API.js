@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 import { checkServerConnection, getNetworkErrorMessage } from "../utils/serverCheck";
 
 // Debug the API URL being used
-const BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api/v1';
+const BASE_URL = process.env.REACT_APP_API_URL || "https://ai-powered-swasthya-sathi.onrender.com";
 console.log('Using API Base URL:', BASE_URL);
 
 // Test connection before setting up API
@@ -37,7 +37,7 @@ const API = axios.create({
   headers: {
     'Content-Type': 'application/json'     // Default content type for requests
   },
-  withCredentials: false,  // Disable credentials to avoid CORS issues
+  withCredentials: true,  // Disable credentials to avoid CORS issues
   timeout: 10000  // Add a timeout to prevent hanging requests
 });
 
