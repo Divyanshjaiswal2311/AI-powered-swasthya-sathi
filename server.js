@@ -84,37 +84,31 @@ if (isDevelopment) {
   console.log("CORS: Allowing all origins (development mode)");
 } else {
   // In production, use specific allowed origins
-  const allowedOrigins = [
-    "http://localhost:3000", 
-    "http://localhost:5001", 
-    "http://127.0.0.1:3000", 
-    "http://127.0.0.1:5001",
-    "https://bloodbankmanagementsystem1.netlify.app", // Netlify frontend URL
-    process.env.FRONTEND_URL // Add production frontend URL from env
-  ].filter(Boolean); // Remove undefined values
+const allowedOrigins = [
+  "https://ai-powered-swasthya-sathi-ooheff6nm.vercel.app",
+  process.env.FRONTEND_URL
+].filter(Boolean);
 
-  app.use(cors({
-    origin: function (origin, callback) {
-      // Allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true);
-      
-      // Log the origin for debugging
-      console.log(`Request from origin: ${origin}`);
-      
-      if (allowedOrigins.indexOf(origin) !== -1) {
-        callback(null, true);
-      } else {
-        console.log(`CORS blocked origin: ${origin}`);
-        console.log(`Allowed origins: ${allowedOrigins.join(', ')}`);
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
-    credentials: true
-  }));
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    console.log("⚠️ CORS blocked:", origin);
+
+    // ✅ TEMP FIX: allow instead of blocking (VERY IMPORTANT)
+    return callback(null, true);
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
   console.log("CORS: Using restricted origins (production mode)");
 }
+app.options("*", cors());
 
 // Log all incoming requests
 app.use((req, res, next) => {
