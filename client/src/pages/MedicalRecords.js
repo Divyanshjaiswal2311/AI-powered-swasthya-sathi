@@ -30,6 +30,7 @@ const MedicalRecords = () => {
   // Fetch medical records on component mount
   React.useEffect(() => {
     fetchMedicalRecords();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   // Save theme preference to localStorage

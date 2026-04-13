@@ -15,7 +15,6 @@ import "./HealthProfile.css";
 const HealthProfile = () => {
   const [healthProfile, setHealthProfile] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [editMode, setEditMode] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
 
   // Form states
