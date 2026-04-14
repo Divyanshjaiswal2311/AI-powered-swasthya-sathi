@@ -15,7 +15,7 @@ const {
   currentUserController,
 } = require("../controllers/authController");
 // Import authentication middleware for protected routes
-const authMiddelware = require("../middlewares/authMiddelware");
+const authMiddelware = require("../middlewares/authMiddleware");
 
 // Create Express router instance
 const router = express.Router();
@@ -45,7 +45,7 @@ router.post("/login", loginController);
  * @description Get the currently logged in user's information
  * @access Private (requires valid JWT token)
  */
-router.get("/current-user", authMiddelware, currentUserController);
+router.get("/current-user", authMiddleware, currentUserController);
 
 // Export the router
 module.exports = router;
