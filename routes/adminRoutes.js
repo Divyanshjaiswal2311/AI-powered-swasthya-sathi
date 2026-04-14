@@ -1,5 +1,5 @@
 const express = require("express");
-const authMiddelware = require("../middlewares/authMiddelware");
+const authMiddelware = require("../middlewares/authMiddleware");
 const {
   getUsersListController,
   getHospitalListController,
@@ -28,13 +28,13 @@ router.get(
   getHospitalListController
 );
 //GET || ORG LIST
-router.get("/org-list", authMiddelware, adminMiddleware, getOrgListController);
+router.get("/org-list", authMiddleware, adminMiddleware, getOrgListController);
 // ==========================
 
 // DELETE USER || DELETE
 router.delete(
   "/delete-user/:id",
-  authMiddelware,
+  authMiddleware,
   adminMiddleware,
   deleteUserController
 );
