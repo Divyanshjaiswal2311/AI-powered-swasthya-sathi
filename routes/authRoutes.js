@@ -15,7 +15,7 @@ const {
   currentUserController,
 } = require("../controllers/authController");
 // Import authentication middleware for protected routes
-const authMiddelware = require("../middlewares/authMiddleware");
+const authMiddleware = require("../middlewares/authMiddleware");
 
 // Create Express router instance
 const router = express.Router();
