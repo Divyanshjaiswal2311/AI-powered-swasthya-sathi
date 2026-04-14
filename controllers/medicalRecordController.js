@@ -84,3 +84,13 @@ const uploadMedicalRecordController = async (req, res) => {
     });
   }
 };
+module.exports = {
+  uploadMedicalRecordController,
+  getMedicalRecordsController,
+  getRecordByIdController,
+  updateMedicalRecordController,
+  deleteMedicalRecordController,
+  shareRecordController,
+  archiveRecordController,
+  getRecordsByTypeController,
+};
