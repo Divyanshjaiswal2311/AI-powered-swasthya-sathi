@@ -6,7 +6,7 @@
  */
 
 const express = require("express");
-const authMiddleware = require("../middlewares/authMiddelware");
+const authMiddleware = require("../middlewares/authMiddleware");
 const {
   createEmergencyAlertController,
   getActiveEmergenciesController,
