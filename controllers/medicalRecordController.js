@@ -4,7 +4,24 @@
 
 const medicalRecordModel = require("../models/medicalRecordModel");
 const healthProfileModel = require("../models/healthProfileModel");
+const getMedicalRecordsController = async (req, res) => {
+  try {
+    const userId = req.user.id;
 
+    const healthProfile = await healthProfileModel.findOne({ userId });
+
+    const records = await medicalRecordModel.find({
+      healthProfileId: healthProfile._id,
+    });
+
+    res.status(200).send({
+      success: true,
+      records,
+    });
+  } catch (error) {
+    res.status(500).send({ success: false, message: error.message });
+  }
+};
 /**
  * Upload Medical Record
  */
