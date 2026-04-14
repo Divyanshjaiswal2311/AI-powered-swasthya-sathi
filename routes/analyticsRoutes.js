@@ -1,5 +1,5 @@
 const express = require("express");
-const authMiddelware = require("../middlewares/authMiddleware");
+const authMiddleware = require("../middlewares/authMiddleware");
 const {
   bloodGroupDetailsContoller,
 } = require("../controllers/analyticsController");
