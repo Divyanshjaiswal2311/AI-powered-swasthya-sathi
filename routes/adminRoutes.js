@@ -1,5 +1,5 @@
 const express = require("express");
-const authMiddelware = require("../middlewares/authMiddleware");
+const authMiddleware = require("../middlewares/authMiddleware");
 const {
   getUsersListController,
   getHospitalListController,
@@ -16,14 +16,14 @@ const router = express.Router();
 //GET || USER LIST
 router.get(
   "/user-list",
-  authMiddelware,
+  authMiddleware,
   adminMiddleware,
   getUsersListController
 );
 //GET || HOSPITAL LIST
 router.get(
   "/hospital-list",
-  authMiddelware,
+  authMiddleware,
   adminMiddleware,
   getHospitalListController
 );
