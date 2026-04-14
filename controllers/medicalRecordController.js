@@ -1,9 +1,19 @@
+/**
+ * Medical Record Controller
+ */
+
+const medicalRecordModel = require("../models/medicalRecordModel");
+const healthProfileModel = require("../models/healthProfileModel");
+
+/**
+ * Upload Medical Record
+ */
 const uploadMedicalRecordController = async (req, res) => {
   try {
     console.log("FILE:", req.file);
     console.log("BODY:", req.body);
 
-    const userId = req.user?.id || req.body.userId; // safe fallback
+    const userId = req.user?.id;
 
     if (!userId) {
       return res.status(400).send({
@@ -43,14 +53,11 @@ const uploadMedicalRecordController = async (req, res) => {
       { upsert: true, new: true }
     );
 
-    // ✅ FIXED FILE HANDLING
     const fileName = req.file.originalname;
     const mimeType = req.file.mimetype;
 
-    // IMPORTANT: match actual storage path
     const fileUrl = `/uploads/medical-records/${req.file.filename}`;
 
-    // Create record
     const medicalRecord = new medicalRecordModel({
       healthProfileId: healthProfile._id,
       documentType: documentType || "other",
@@ -84,6 +91,166 @@ const uploadMedicalRecordController = async (req, res) => {
     });
   }
 };
+
+/**
+ * Get Record by ID
+ */
+const getRecordByIdController = async (req, res) => {
+  try {
+    const { recordId } = req.params;
+
+    const record = await medicalRecordModel.findById(recordId);
+
+    if (!record) {
+      return res.status(404).send({
+        success: false,
+        message: "Record not found",
+      });
+    }
+
+    res.status(200).send({
+      success: true,
+      record,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ success: false, message: error.message });
+  }
+};
+
+/**
+ * Update Record
+ */
+const updateMedicalRecordController = async (req, res) => {
+  try {
+    const { recordId } = req.params;
+
+    const record = await medicalRecordModel.findByIdAndUpdate(
+      recordId,
+      req.body,
+      { new: true }
+    );
+
+    res.status(200).send({
+      success: true,
+      message: "Record updated",
+      record,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ success: false, message: error.message });
+  }
+};
+
+/**
+ * Delete Record
+ */
+const deleteMedicalRecordController = async (req, res) => {
+  try {
+    const { recordId } = req.params;
+
+    await medicalRecordModel.findByIdAndDelete(recordId);
+
+    res.status(200).send({
+      success: true,
+      message: "Record deleted",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ success: false, message: error.message });
+  }
+};
+
+/**
+ * Share Record
+ */
+const shareRecordController = async (req, res) => {
+  try {
+    const { recordId, doctorId } = req.body;
+
+    const record = await medicalRecordModel.findByIdAndUpdate(
+      recordId,
+      {
+        $push: {
+          sharedWith: {
+            userId: doctorId,
+            sharedAt: new Date(),
+          },
+        },
+      },
+      { new: true }
+    );
+
+    res.status(200).send({
+      success: true,
+      message: "Record shared",
+      record,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ success: false, message: error.message });
+  }
+};
+
+/**
+ * Archive Record
+ */
+const archiveRecordController = async (req, res) => {
+  try {
+    const { recordId } = req.params;
+
+    const record = await medicalRecordModel.findByIdAndUpdate(
+      recordId,
+      {
+        isArchived: true,
+        archivedAt: new Date(),
+      },
+      { new: true }
+    );
+
+    res.status(200).send({
+      success: true,
+      message: "Record archived",
+      record,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ success: false, message: error.message });
+  }
+};
+
+/**
+ * Get Records by Type
+ */
+const getRecordsByTypeController = async (req, res) => {
+  try {
+    const { documentType } = req.params;
+    const userId = req.user.id;
+
+    const healthProfile = await healthProfileModel.findOne({ userId });
+
+    if (!healthProfile) {
+      return res.status(404).send({
+        success: false,
+        message: "Health profile not found",
+      });
+    }
+
+    const records = await medicalRecordModel.find({
+      healthProfileId: healthProfile._id,
+      documentType,
+    });
+
+    res.status(200).send({
+      success: true,
+      records,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   uploadMedicalRecordController,
   getRecordByIdController,
