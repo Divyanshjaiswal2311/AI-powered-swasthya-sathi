@@ -7,7 +7,7 @@
 const express = require("express");
 const multer = require("multer");
 const path = require("path");
-const authMiddleware = require("../middlewares/authMiddelware");
+const authMiddleware = require("../middlewares/authMiddleware");
 const {
   uploadMedicalRecordController,
   getMedicalRecordsController,
