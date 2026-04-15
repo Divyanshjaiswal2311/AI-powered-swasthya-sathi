@@ -22,8 +22,9 @@ import {
 /**
  * Sidebar component with dynamic menu items based on user role
  * @param {boolean} sidebarOpen - Controls whether sidebar is open or closed on mobile
+ * @param {function} closeSidebar - Function to close sidebar when menu item is clicked
  */
-const Sidebar = ({ sidebarOpen }) => {
+const Sidebar = ({ sidebarOpen, closeSidebar }) => {
   const { user } = useSelector((state) => state.auth);
   const location = useLocation();
 
@@ -93,6 +94,14 @@ const Sidebar = ({ sidebarOpen }) => {
     });
   }
 
+  // Handle menu item click - close sidebar on mobile
+  const handleMenuItemClick = (e) => {
+    e.stopPropagation();
+    if (closeSidebar) {
+      closeSidebar();
+    }
+  };
+
   return (
     <div className={`sidebar-wrapper ${sidebarOpen ? 'open' : ''}`}>
       <div className="sidebar-header">
@@ -107,6 +116,7 @@ const Sidebar = ({ sidebarOpen }) => {
               to={menu.path} 
               className={`menu-item ${isActive ? 'active' : ''}`} 
               key={index}
+              onClick={handleMenuItemClick}
             >
               <div className="menu-icon">{menu.icon}</div>
               <span className="menu-text">
