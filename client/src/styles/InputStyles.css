@@ -1,0 +1,317 @@
+/* Global Input Styles with Deep Colors */
+
+/* Text Inputs, Textareas, and Select Fields */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"],
+input[type="month"],
+input[type="week"],
+input[type="tel"],
+input[type="url"],
+input[type="search"],
+textarea,
+select {
+  width: 100%;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  border: 2px solid #334155;
+  border-radius: 8px;
+  background-color: #1e293b;
+  color: #f1f5f9;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Focus State */
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+input[type="time"]:focus,
+input[type="datetime-local"]:focus,
+input[type="month"]:focus,
+input[type="week"]:focus,
+input[type="tel"]:focus,
+input[type="url"]:focus,
+input[type="search"]:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background-color: #0f172a;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+
+/* Placeholder Styling */
+input::placeholder,
+textarea::placeholder {
+  color: #64748b;
+  opacity: 0.8;
+}
+
+/* Textarea Specific */
+textarea {
+  resize: vertical;
+  min-height: 120px;
+  font-family: inherit;
+}
+
+textarea:focus {
+  min-height: 120px;
+}
+
+/* Select Dropdown */
+select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%233b82f6' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+
+select option {
+  background-color: #1e293b;
+  color: #f1f5f9;
+  padding: 8px;
+}
+
+/* Label Styling */
+label {
+  display: block;
+  margin-bottom: 8px;
+  color: #e2e8f0;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: color 0.3s ease;
+}
+
+label:hover {
+  color: #3b82f6;
+}
+
+/* Input Group */
+.input-group {
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.input-group input,
+.input-group textarea,
+.input-group select {
+  width: 100%;
+}
+
+/* Error State */
+input.error,
+textarea.error,
+select.error {
+  border-color: #ef4444;
+  background-color: rgba(239, 68, 68, 0.05);
+}
+
+input.error:focus,
+textarea.error:focus,
+select.error:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1), 0 4px 12px rgba(239, 68, 68, 0.2);
+  border-color: #ef4444;
+}
+
+.error-message {
+  color: #ef4444;
+  font-size: 0.85rem;
+  margin-top: -10px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Success State */
+input.success,
+textarea.success,
+select.success {
+  border-color: #10b981;
+  background-color: rgba(16, 185, 129, 0.05);
+}
+
+input.success:focus,
+textarea.success:focus,
+select.success:focus {
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1), 0 4px 12px rgba(16, 185, 129, 0.2);
+  border-color: #10b981;
+}
+
+.success-message {
+  color: #10b981;
+  font-size: 0.85rem;
+  margin-top: -10px;
+  margin-bottom: 10px;
+}
+
+/* Disabled State */
+input:disabled,
+textarea:disabled,
+select:disabled {
+  background-color: #0f172a;
+  color: #64748b;
+  cursor: not-allowed;
+  border-color: #334155;
+  opacity: 0.6;
+}
+
+/* File Input */
+input[type="file"] {
+  padding: 8px;
+  cursor: pointer;
+}
+
+input[type="file"]::file-selector-button {
+  background-color: #3b82f6;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  margin-right: 12px;
+}
+
+input[type="file"]::file-selector-button:hover {
+  background-color: #2563eb;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+/* Checkbox and Radio */
+input[type="checkbox"],
+input[type="radio"] {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  cursor: pointer;
+  accent-color: #3b82f6;
+}
+
+/* Range Input */
+input[type="range"] {
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: #334155;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #3b82f6;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+  transition: all 0.3s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  width: 24px;
+  height: 24px;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.6);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #3b82f6;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+  transition: all 0.3s ease;
+}
+
+input[type="range"]::-moz-range-thumb:hover {
+  width: 24px;
+  height: 24px;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.6);
+}
+
+/* Number Input Spinner Buttons */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="date"],
+  input[type="time"],
+  input[type="datetime-local"],
+  input[type="month"],
+  input[type="week"],
+  input[type="tel"],
+  input[type="url"],
+  input[type="search"],
+  textarea,
+  select {
+    padding: 10px 12px;
+    font-size: 16px;
+  }
+
+  label {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="date"],
+  input[type="time"],
+  input[type="datetime-local"],
+  input[type="month"],
+  input[type="week"],
+  input[type="tel"],
+  input[type="url"],
+  input[type="search"],
+  textarea,
+  select {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 6px;
+  }
+
+  textarea {
+    min-height: 100px;
+  }
+
+  label {
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+  }
+
+  .input-group {
+    margin-bottom: 16px;
+  }
+}
+
