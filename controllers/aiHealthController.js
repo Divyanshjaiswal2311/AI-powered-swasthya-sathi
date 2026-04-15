@@ -441,6 +441,112 @@ function createDefaultAnalysis(record) {
   };
 }
 
+/**
+ * Helper function to calculate age
+ */
+function calculateAge(dateOfBirth) {
+  if (!dateOfBirth) return 0;
+  const today = new Date();
+  let age = today.getFullYear() - new Date(dateOfBirth).getFullYear();
+  const monthDifference = today.getMonth() - new Date(dateOfBirth).getMonth();
+
+  if (
+    monthDifference < 0 ||
+    (monthDifference === 0 && today.getDate() < new Date(dateOfBirth).getDate())
+  ) {
+    age--;
+  }
+
+  return age;
+}
+
+/**
+ * Generate prompt for AI based on report type and health data
+ */
+function generatePrompt(reportType, healthData) {
+  const basePrompt = `Generate a comprehensive ${reportType} health report for a patient with the following information:
+  
+Age: ${healthData.age}
+Blood Type: ${healthData.bloodType}
+Medical Conditions: ${healthData.conditions?.map(c => c.condition).join(', ') || 'None'}
+Allergies: ${healthData.allergies?.map(a => a.allergen).join(', ') || 'None'}
+Current Medications: ${healthData.medications?.map(m => m.name).join(', ') || 'None'}
+Vitals: ${JSON.stringify(healthData.vitals)}
+Lifestyle: ${JSON.stringify(healthData.lifestyle)}
+
+Recent Medical Records: ${healthData.recentRecords?.length || 0} records
+
+Please provide:
+1. Executive Summary
+2. Key Health Findings
+3. Health Recommendations
+4. Risk Factors
+5. Metrics Analysis`;
+
+  return basePrompt;
+}
+
+/**
+ * Call Groq API for AI processing
+ */
+async function callGeminiAPI(prompt) {
+  try {
+    const response = await axios.post(
+      GROQ_API_URL,
+      {
+        model: GROQ_MODEL,
+        messages: [
+          {
+            role: "user",
+            content: prompt,
+          },
+        ],
+        max_tokens: 2000,
+        temperature: 0.7,
+      },
+      {
+        headers: {
+          "Authorization": `Bearer ${GROQ_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        timeout: 30000,
+      }
+    );
+
+    const startTime = Date.now();
+    const aiMessage = response?.data?.choices?.[0]?.message?.content || "";
+    const processingTime = Date.now() - startTime;
+
+    return {
+      success: true,
+      data: aiMessage,
+      processingTime,
+    };
+  } catch (error) {
+    console.error("Groq API Error:", error.message);
+    return {
+      success: false,
+      error: error.message,
+    };
+  }
+}
+
+/**
+ * Parse AI response and structure it
+ */
+function parseAIResponse(aiText, reportType) {
+  // Simple parsing - in production, use more sophisticated parsing
+  return {
+    title: `${reportType} Health Report`,
+    summary: aiText.substring(0, 200),
+    findings: ["Report generated successfully"],
+    recommendations: ["Consult with healthcare provider", "Follow medical advice"],
+    riskFactors: [],
+    metricsAnalysis: {},
+    confidence: 85,
+  };
+}
+
 module.exports = {
   generateHealthReportController,
   getFirstAidRecommendationController,

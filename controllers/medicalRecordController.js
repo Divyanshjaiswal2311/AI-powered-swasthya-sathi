@@ -6,7 +6,7 @@ const medicalRecordModel = require("../models/medicalRecordModel");
 const healthProfileModel = require("../models/healthProfileModel");
 const getMedicalRecordsController = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.body.userId;
 
     const healthProfile = await healthProfileModel.findOne({ userId });
 
@@ -30,7 +30,7 @@ const uploadMedicalRecordController = async (req, res) => {
     console.log("FILE:", req.file);
     console.log("BODY:", req.body);
 
-    const userId = req.user?.id;
+    const userId = req.body.userId;
 
     if (!userId) {
       return res.status(400).send({
@@ -242,7 +242,7 @@ const archiveRecordController = async (req, res) => {
 const getRecordsByTypeController = async (req, res) => {
   try {
     const { documentType } = req.params;
-    const userId = req.user.id;
+    const userId = req.body.userId;
 
     const healthProfile = await healthProfileModel.findOne({ userId });
 
@@ -269,6 +269,7 @@ const getRecordsByTypeController = async (req, res) => {
 };
 
 module.exports = {
+  getMedicalRecordsController,
   uploadMedicalRecordController,
   getRecordByIdController,
   updateMedicalRecordController,
