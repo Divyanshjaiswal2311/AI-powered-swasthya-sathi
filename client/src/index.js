@@ -7,6 +7,7 @@ import "./styles/Layout.css";
 import "./styles/Animations.css";
 import "./styles/Responsive.css";
 import "./styles/Dashboard.css";
+import "./styles/InputStyles.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
