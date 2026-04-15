@@ -21,9 +21,9 @@ import {
 
 /**
  * Sidebar component with dynamic menu items based on user role
- * @param {boolean} collapsed - Controls whether sidebar is collapsed or expanded
+ * @param {boolean} sidebarOpen - Controls whether sidebar is open or closed on mobile
  */
-const Sidebar = ({ collapsed }) => {
+const Sidebar = ({ sidebarOpen }) => {
   const { user } = useSelector((state) => state.auth);
   const location = useLocation();
 
@@ -94,9 +94,9 @@ const Sidebar = ({ collapsed }) => {
   }
 
   return (
-    <div className={`sidebar-wrapper ${collapsed ? 'collapsed' : ''}`}>
+    <div className={`sidebar-wrapper ${sidebarOpen ? 'open' : ''}`}>
       <div className="sidebar-header">
-        <h4 className={collapsed ? 'd-none' : ''}>Dashboard</h4>
+        <h4>Dashboard</h4>
       </div>
       
       <div className="sidebar-menu">
@@ -109,7 +109,7 @@ const Sidebar = ({ collapsed }) => {
               key={index}
             >
               <div className="menu-icon">{menu.icon}</div>
-              <span className={`menu-text ${collapsed ? 'd-none' : ''}`}>
+              <span className="menu-text">
                 {menu.name}
               </span>
             </Link>
@@ -118,6 +118,7 @@ const Sidebar = ({ collapsed }) => {
       </div>
     </div>
   );
+};
 };
 
 export default Sidebar;
