@@ -5,8 +5,15 @@ import Sidebar from "./Sidebar";
 const Layout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const toggleSidebar = () => {
+  const toggleSidebar = (e) => {
+    if (e) {
+      e.stopPropagation();
+    }
     setSidebarOpen(!sidebarOpen);
+  };
+
+  const closeSidebar = () => {
+    setSidebarOpen(false);
   };
 
   // Close sidebar when screen resizes to larger size
@@ -21,14 +28,23 @@ const Layout = ({ children }) => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Close sidebar when clicking outside
+  // Close sidebar when clicking outside (on content area)
   useEffect(() => {
     const handleClickOutside = (e) => {
-      const sidebar = document.querySelector(".sidebar-wrapper");
+      // Don't close if clicking the toggle button
       const toggleBtn = document.querySelector(".sidebar-toggle");
+      if (toggleBtn && toggleBtn.contains(e.target)) {
+        return;
+      }
 
-      if (sidebarOpen && sidebar && toggleBtn &&
-          !sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+      // Don't close if clicking inside the sidebar itself
+      const sidebar = document.querySelector(".sidebar-wrapper");
+      if (sidebar && sidebar.contains(e.target)) {
+        return;
+      }
+
+      // Close sidebar when clicking on content area
+      if (sidebarOpen) {
         setSidebarOpen(false);
       }
     };
@@ -48,7 +64,7 @@ const Layout = ({ children }) => {
         <Header toggleSidebar={toggleSidebar} />
       </div>
       <div className={`main-content ${sidebarOpen ? 'sidebar-open' : ''}`}>
-        <Sidebar sidebarOpen={sidebarOpen} />
+        <Sidebar sidebarOpen={sidebarOpen} closeSidebar={closeSidebar} />
         <div className="content-area">
           <div className="container-fluid py-3">
             {children}
